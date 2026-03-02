@@ -1338,36 +1338,8 @@
       <div class="about-visual reveal">
         <div class="about-deco"></div>
         <div class="about-photo-wrap" id="about-photo-wrap">
-          <div class="about-photo-placeholder" id="about-placeholder">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"
-              stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-            <span>Your Photo Here</span>
-          </div>
+          <img src="profile.jpg" alt="Jit — Photographer" />
         </div>
-        <button class="about-upload-btn" id="upload-btn" onclick="document.getElementById('about-photo-input').click()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="17 8 12 3 7 8" />
-            <line x1="12" y1="3" x2="12" y2="15" />
-          </svg>
-          Upload Photo
-        </button>
-        <button class="about-upload-btn" id="save-btn" onclick="saveHtmlWithPhoto()"
-          style="display:none; bottom:3.5rem; background:#2d7a4f;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="17 8 12 3 7 8" />
-            <line x1="12" y1="3" x2="12" y2="15" />
-          </svg>
-          Save index.html
-        </button>
-        <input type="file" id="about-photo-input" accept="image/*" style="display:none"
-          onchange="loadAboutPhoto(event)" />
       </div>
 
       <!-- Right: text -->
@@ -1913,51 +1885,7 @@
       document.getElementById('mobile-nav').classList.remove('open');
     }
 
-    // ============================================================
-    // ABOUT PHOTO UPLOAD
-    // ============================================================
-    let _embeddedPhotoBase64 = null;
 
-    function loadAboutPhoto(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function (r) {
-        _embeddedPhotoBase64 = r.target.result; // store base64
-        const wrap = document.getElementById('about-photo-wrap');
-        const ph = document.getElementById('about-placeholder');
-        if (ph) ph.remove();
-        const oldImg = wrap.querySelector('img');
-        if (oldImg) oldImg.remove();
-        const img = document.createElement('img');
-        img.src = _embeddedPhotoBase64;
-        img.alt = 'Jit — photographer';
-        img.id = 'about-photo-embedded';
-        wrap.appendChild(img);
-        // Show Save button
-        document.getElementById('save-btn').style.display = 'flex';
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function saveHtmlWithPhoto() {
-      if (!_embeddedPhotoBase64) return;
-      // Get current HTML source
-      let html = document.documentElement.outerHTML;
-      // Replace the placeholder block with a hardcoded img tag
-      const phPattern = /<div class="about-photo-placeholder"[\s\S]*?<\/div>/;
-      const imgTag = `<img src="${_embeddedPhotoBase64}" alt="Jit" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />`;
-      html = html.replace(phPattern, imgTag);
-      // Also remove the save-btn from the saved file (it's a one-time tool)
-      html = html.replace(/<button[^>]*id="save-btn"[^>]*>[\s\S]*?<\/button>/, '');
-      // Download as index.html
-      const blob = new Blob([html], { type: 'text/html' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'index.html';
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }
 
     // ============================================================
     // GALLERY — Load from repo by naming convention
