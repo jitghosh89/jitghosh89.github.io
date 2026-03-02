@@ -675,7 +675,7 @@
 
     .gallery-header {
       max-width: 1100px;
-      margin: 0 auto 3rem;
+      margin: 0 auto 2.5rem;
     }
 
     .gallery-info {
@@ -684,13 +684,29 @@
       margin-top: 0.5rem;
     }
 
-    /* 3×3 grid */
-    .gallery-grid {
+    .gallery-info code {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.1em 0.45em;
+      font-size: 0.78rem;
+      color: var(--accent);
+      font-family: monospace;
+    }
+
+    /* Wrapper with nav */
+    .gallery-wrap {
       max-width: 1100px;
       margin: 0 auto;
+      position: relative;
+    }
+
+    /* 3x3 grid */
+    .gallery-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
+      min-height: 200px;
     }
 
     /* Each cell */
@@ -700,53 +716,16 @@
       border-radius: 4px;
       overflow: hidden;
       background: var(--surface);
-      border: 1.5px dashed var(--border);
+      border: 1px solid var(--border);
       cursor: pointer;
-      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      transition: transform 0.3s, box-shadow 0.3s;
     }
 
     .gallery-cell:hover {
-      border-color: var(--accent);
-      transform: scale(1.015);
+      transform: scale(1.018);
       box-shadow: var(--shadow);
     }
 
-    /* Empty state — the + add icon */
-    .cell-empty {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      gap: 0.6rem;
-      color: var(--text-muted);
-      pointer-events: none;
-    }
-
-    .cell-empty svg {
-      width: 36px;
-      height: 36px;
-      opacity: 0.4;
-      transition: opacity 0.3s;
-    }
-
-    .gallery-cell:hover .cell-empty svg {
-      opacity: 0.9;
-    }
-
-    .cell-empty span {
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      opacity: 0.5;
-      transition: opacity 0.3s;
-    }
-
-    .gallery-cell:hover .cell-empty span {
-      opacity: 1;
-    }
-
-    /* Filled state */
     .cell-img {
       position: absolute;
       inset: 0;
@@ -760,11 +739,10 @@
       transform: scale(1.06);
     }
 
-    /* Overlay on hover */
     .cell-overlay {
       position: absolute;
       inset: 0;
-      background: rgba(0, 0, 0, 0.45);
+      background: rgba(0, 0, 0, 0.35);
       opacity: 0;
       transition: opacity 0.3s;
       display: flex;
@@ -776,52 +754,77 @@
       opacity: 1;
     }
 
-    /* Delete button */
-    .cell-delete {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 34px;
-      height: 34px;
-      background: rgba(200, 50, 50, 0.85);
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transform: scale(0.7);
-      transition: opacity 0.3s, transform 0.3s;
-      z-index: 10;
-    }
-
-    .gallery-cell:hover .cell-delete {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .cell-delete:hover {
-      background: rgba(200, 50, 50, 1);
-    }
-
-    .cell-delete svg {
-      width: 14px;
-      height: 14px;
-      stroke: #fff;
-    }
-
-    /* Cell label */
     .cell-num {
       font-size: 0.68rem;
       letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(255, 255, 255, 0.75);
     }
 
-    /* Hidden file inputs */
-    .cell-input {
-      display: none;
+    /* Nav arrows */
+    .gallery-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 46px;
+      height: 46px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      font-size: 1.6rem;
+      line-height: 1;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s, border-color 0.3s, transform 0.2s;
+      z-index: 10;
+      user-select: none;
+    }
+
+    .gallery-nav:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0d0d0d;
+    }
+
+    .gallery-nav.prev {
+      left: -58px;
+    }
+
+    .gallery-nav.next {
+      right: -58px;
+    }
+
+    .gallery-nav:disabled {
+      opacity: 0.2;
+      pointer-events: none;
+    }
+
+    .gallery-page-info {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    .gallery-empty {
+      grid-column: 1 / -1;
+      padding: 4rem 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.8;
+    }
+
+    .gallery-loading {
+      grid-column: 1 / -1;
+      padding: 3rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
     }
 
     /* Lightbox */
@@ -1335,8 +1338,7 @@
       <div class="about-visual reveal">
         <div class="about-deco"></div>
         <div class="about-photo-wrap" id="about-photo-wrap">
-          <!-- <div class="about-photo-placeholder" id="about-placeholder">-->
-            <img src="profile.jpg" alt="Jit" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
+          <div class="about-photo-placeholder" id="about-placeholder">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"
               stroke-linejoin="round">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
@@ -1345,7 +1347,7 @@
             <span>Your Photo Here</span>
           </div>
         </div>
-        <button class="about-upload-btn" onclick="document.getElementById('about-photo-input').click()">
+        <button class="about-upload-btn" id="upload-btn" onclick="document.getElementById('about-photo-input').click()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
             stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -1353,6 +1355,16 @@
             <line x1="12" y1="3" x2="12" y2="15" />
           </svg>
           Upload Photo
+        </button>
+        <button class="about-upload-btn" id="save-btn" onclick="saveHtmlWithPhoto()"
+          style="display:none; bottom:3.5rem; background:#2d7a4f;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          Save index.html
         </button>
         <input type="file" id="about-photo-input" accept="image/*" style="display:none"
           onchange="loadAboutPhoto(event)" />
@@ -1399,19 +1411,26 @@
   </section>
 
   <!-- ================================================================
-       GALLERY — 3 × 3 Grid
+       GALLERY
   ================================================================ -->
   <section id="gallery">
     <div class="gallery-header reveal">
       <p class="section-label">Portfolio</p>
       <h2 class="section-title">My Work</h2>
       <div class="divider"></div>
-      <p class="gallery-info">Click any slot to upload a photo &nbsp;·&nbsp; Hover over a photo to delete it</p>
+      <p class="gallery-info">
+        Add photos to your repo named <code>gallery-01.jpg</code>, <code>gallery-02.jpg</code> … up to
+        <code>gallery-30.jpg</code>
+      </p>
     </div>
-
-    <div class="gallery-grid" id="gallery-grid">
-      <!-- 9 cells are injected by JS -->
+    <div class="gallery-wrap">
+      <button class="gallery-nav prev" id="gallery-prev" aria-label="Previous">&#8249;</button>
+      <div class="gallery-grid" id="gallery-grid">
+        <div class="gallery-loading">Loading photos…</div>
+      </div>
+      <button class="gallery-nav next" id="gallery-next" aria-label="Next">&#8250;</button>
     </div>
+    <div class="gallery-page-info" id="gallery-page-info"></div>
   </section>
 
   <!-- Lightbox -->
@@ -1897,110 +1916,138 @@
     // ============================================================
     // ABOUT PHOTO UPLOAD
     // ============================================================
+    let _embeddedPhotoBase64 = null;
+
     function loadAboutPhoto(e) {
       const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
       reader.onload = function (r) {
+        _embeddedPhotoBase64 = r.target.result; // store base64
         const wrap = document.getElementById('about-photo-wrap');
-        // Remove placeholder if exists
         const ph = document.getElementById('about-placeholder');
         if (ph) ph.remove();
-        // Remove old img if exists
         const oldImg = wrap.querySelector('img');
         if (oldImg) oldImg.remove();
         const img = document.createElement('img');
-        img.src = r.target.result;
+        img.src = _embeddedPhotoBase64;
         img.alt = 'Jit — photographer';
+        img.id = 'about-photo-embedded';
         wrap.appendChild(img);
+        // Show Save button
+        document.getElementById('save-btn').style.display = 'flex';
       };
       reader.readAsDataURL(file);
     }
 
+    function saveHtmlWithPhoto() {
+      if (!_embeddedPhotoBase64) return;
+      // Get current HTML source
+      let html = document.documentElement.outerHTML;
+      // Replace the placeholder block with a hardcoded img tag
+      const phPattern = /<div class="about-photo-placeholder"[\s\S]*?<\/div>/;
+      const imgTag = `<img src="${_embeddedPhotoBase64}" alt="Jit" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />`;
+      html = html.replace(phPattern, imgTag);
+      // Also remove the save-btn from the saved file (it's a one-time tool)
+      html = html.replace(/<button[^>]*id="save-btn"[^>]*>[\s\S]*?<\/button>/, '');
+      // Download as index.html
+      const blob = new Blob([html], { type: 'text/html' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'index.html';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
     // ============================================================
-    // GALLERY — 3×3 Grid
+    // GALLERY — Load from repo by naming convention
+    // Files: gallery-01.jpg, gallery-02.jpg ... gallery-30.jpg
     // ============================================================
-    const CELL_COUNT = 9;
+    const GALLERY_MAX = 30;  // max images to check
+    const PER_PAGE = 9;   // 3×3 grid
     const galleryGrid = document.getElementById('gallery-grid');
-    const cellData = Array(CELL_COUNT).fill(null); // stores { dataUrl, name }
+    const prevBtn = document.getElementById('gallery-prev');
+    const nextBtn = document.getElementById('gallery-next');
+    const pageInfo = document.getElementById('gallery-page-info');
 
-    function buildGalleryGrid() {
-      galleryGrid.innerHTML = '';
-      for (let i = 0; i < CELL_COUNT; i++) {
-        const cell = document.createElement('div');
-        cell.className = 'gallery-cell';
-        cell.dataset.idx = i;
+    let galleryImages = [];  // loaded src strings
+    let galleryPage = 0;
 
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = 'image/*';
-        fileInput.className = 'cell-input';
-        fileInput.id = 'cell-input-' + i;
-        fileInput.addEventListener('change', (e) => handleCellUpload(e, i));
+    function pad(n) { return String(n).padStart(2, '0'); }
 
-        if (cellData[i]) {
-          // Filled cell
-          const img = document.createElement('img');
-          img.className = 'cell-img';
-          img.src = cellData[i].dataUrl;
-          img.alt = cellData[i].name || ('Photo ' + (i + 1));
-
-          const overlay = document.createElement('div');
-          overlay.className = 'cell-overlay';
-
-          const num = document.createElement('span');
-          num.className = 'cell-num';
-          num.textContent = (i + 1).toString().padStart(2, '0');
-          overlay.appendChild(num);
-
-          const delBtn = document.createElement('button');
-          delBtn.className = 'cell-delete';
-          delBtn.title = 'Delete photo';
-          delBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
-          delBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            cellData[i] = null;
-            buildGalleryGrid();
-          });
-
-          // Lightbox on click
-          cell.addEventListener('click', () => openLightbox(cellData[i].dataUrl));
-
-          cell.appendChild(img);
-          cell.appendChild(overlay);
-          cell.appendChild(delBtn);
-        } else {
-          // Empty cell
-          const empty = document.createElement('div');
-          empty.className = 'cell-empty';
-          empty.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="16"/>
-              <line x1="8"  y1="12" x2="16" y2="12"/>
-            </svg>
-            <span>Add Photo</span>`;
-          cell.appendChild(empty);
-          cell.addEventListener('click', () => document.getElementById('cell-input-' + i).click());
+    function tryLoadImages() {
+      let loaded = [], checked = 0;
+      for (let i = 1; i <= GALLERY_MAX; i++) {
+        const src = `gallery-${pad(i)}.jpg`;
+        const img = new Image();
+        img.onload = () => { loaded.push({ src, idx: i }); done(); };
+        img.onerror = () => { done(); };
+        img.src = src;
+      }
+      function done() {
+        checked++;
+        if (checked === GALLERY_MAX) {
+          loaded.sort((a, b) => a.idx - b.idx);
+          galleryImages = loaded.map(l => l.src);
+          renderPage(0);
         }
-
-        cell.appendChild(fileInput);
-        galleryGrid.appendChild(cell);
       }
     }
 
-    function handleCellUpload(e, idx) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function (r) {
-        cellData[idx] = { dataUrl: r.target.result, name: file.name };
-        buildGalleryGrid();
-      };
-      reader.readAsDataURL(file);
+    function renderPage(page) {
+      galleryPage = page;
+      galleryGrid.innerHTML = '';
+
+      if (galleryImages.length === 0) {
+        galleryGrid.innerHTML = `<div class="gallery-empty">
+          No photos yet.<br>
+          Add images named <strong>gallery-01.jpg</strong>, <strong>gallery-02.jpg</strong>&hellip; to your GitHub repo.
+        </div>`;
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+        pageInfo.textContent = '';
+        return;
+      }
+
+      const totalPages = Math.ceil(galleryImages.length / PER_PAGE);
+      const start = page * PER_PAGE;
+      const slice = galleryImages.slice(start, start + PER_PAGE);
+
+      slice.forEach((src, i) => {
+        const cell = document.createElement('div');
+        cell.className = 'gallery-cell';
+
+        const img = document.createElement('img');
+        img.className = 'cell-img';
+        img.src = src;
+        img.alt = `Photo ${start + i + 1}`;
+
+        const overlay = document.createElement('div');
+        overlay.className = 'cell-overlay';
+        const num = document.createElement('span');
+        num.className = 'cell-num';
+        num.textContent = String(start + i + 1).padStart(2, '0');
+        overlay.appendChild(num);
+
+        cell.appendChild(img);
+        cell.appendChild(overlay);
+        cell.addEventListener('click', () => openLightbox(src));
+        galleryGrid.appendChild(cell);
+      });
+
+      prevBtn.disabled = (page === 0);
+      nextBtn.disabled = (page >= totalPages - 1);
+      pageInfo.textContent = totalPages > 1
+        ? `Page ${page + 1} of ${totalPages}  ·  ${galleryImages.length} photos`
+        : `${galleryImages.length} photo${galleryImages.length > 1 ? 's' : ''}`;
     }
 
-    buildGalleryGrid();
+    prevBtn.addEventListener('click', () => renderPage(galleryPage - 1));
+    nextBtn.addEventListener('click', () => renderPage(galleryPage + 1));
+
+    tryLoadImages();
+
+
 
     // ============================================================
     // LIGHTBOX
