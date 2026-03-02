@@ -761,53 +761,55 @@
       color: rgba(255, 255, 255, 0.75);
     }
 
-    /* Nav arrows */
-    .gallery-nav {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 46px;
-      height: 46px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 50%;
-      font-size: 1.6rem;
-      line-height: 1;
-      color: var(--text);
-      cursor: pointer;
+    /* Pagination below grid */
+    .gallery-pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.8rem;
+      margin-top: 2.5rem;
+    }
+
+    .page-btn {
+      width: 40px;
+      height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.3s, border-color 0.3s, transform 0.2s;
-      z-index: 10;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.3s;
       user-select: none;
     }
 
-    .gallery-nav:hover {
+    .page-btn:hover:not(:disabled) {
       background: var(--accent);
       border-color: var(--accent);
       color: #0d0d0d;
     }
 
-    .gallery-nav.prev {
-      left: -58px;
+    .page-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0d0d0d;
+      font-weight: 600;
     }
 
-    .gallery-nav.next {
-      right: -58px;
-    }
-
-    .gallery-nav:disabled {
+    .page-btn:disabled {
       opacity: 0.2;
-      pointer-events: none;
+      cursor: default;
     }
 
-    .gallery-page-info {
-      text-align: center;
-      margin-top: 1.5rem;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      letter-spacing: 0.1em;
+    .page-btn.prev-next {
+      width: auto;
+      padding: 0 1rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     .gallery-empty {
@@ -1399,13 +1401,11 @@
       </p>
     </div>
     <div class="gallery-wrap">
-      <button class="gallery-nav prev" id="gallery-prev" aria-label="Previous">&#8249;</button>
       <div class="gallery-grid" id="gallery-grid">
         <div class="gallery-loading">Loading photos…</div>
       </div>
-      <button class="gallery-nav next" id="gallery-next" aria-label="Next">&#8250;</button>
     </div>
-    <div class="gallery-page-info" id="gallery-page-info"></div>
+    <div class="gallery-pagination" id="gallery-pagination"></div>
   </section>
 
   <!-- Lightbox -->
@@ -1426,7 +1426,7 @@
         <div class="divider reveal"></div>
         <div class="contact-info reveal">
           <p>Have a project or a moment you want captured? Fill out the form and I'll get back to you within 24 hours.
-            You can also reach me directly via Gmail.</p>
+            You can also reach me directly via Gmail or Phone.</p>
           <div class="contact-methods">
             <a class="contact-method" href="mailto:jit.ghosh1@gmail.com" target="_blank" rel="noopener">
               <div class="method-icon gmail">
@@ -1912,9 +1912,7 @@
     const GALLERY_MAX = 30;  // max images to check
     const PER_PAGE = 9;   // 3×3 grid
     const galleryGrid = document.getElementById('gallery-grid');
-    const prevBtn = document.getElementById('gallery-prev');
-    const nextBtn = document.getElementById('gallery-next');
-    const pageInfo = document.getElementById('gallery-page-info');
+    const paginationRoot = document.getElementById('gallery-pagination');
 
     let galleryImages = [];  // loaded src strings
     let galleryPage = 0;
@@ -1943,15 +1941,13 @@
     function renderPage(page) {
       galleryPage = page;
       galleryGrid.innerHTML = '';
+      paginationRoot.innerHTML = '';
 
       if (galleryImages.length === 0) {
         galleryGrid.innerHTML = `<div class="gallery-empty">
           No photos yet.<br>
           Add images named <strong>gallery-01.jpg</strong>, <strong>gallery-02.jpg</strong>&hellip; to your GitHub repo.
         </div>`;
-        prevBtn.disabled = true;
-        nextBtn.disabled = true;
-        pageInfo.textContent = '';
         return;
       }
 
@@ -1981,15 +1977,33 @@
         galleryGrid.appendChild(cell);
       });
 
-      prevBtn.disabled = (page === 0);
-      nextBtn.disabled = (page >= totalPages - 1);
-      pageInfo.textContent = totalPages > 1
-        ? `Page ${page + 1} of ${totalPages}  ·  ${galleryImages.length} photos`
-        : `${galleryImages.length} photo${galleryImages.length > 1 ? 's' : ''}`;
-    }
+      if (totalPages > 1) {
+        // Prev button
+        const prev = document.createElement('button');
+        prev.className = 'page-btn prev-next';
+        prev.textContent = 'Prev';
+        prev.disabled = (page === 0);
+        prev.onclick = () => renderPage(page - 1);
+        paginationRoot.appendChild(prev);
 
-    prevBtn.addEventListener('click', () => renderPage(galleryPage - 1));
-    nextBtn.addEventListener('click', () => renderPage(galleryPage + 1));
+        // Page numbers
+        for (let j = 0; j < totalPages; j++) {
+          const btn = document.createElement('button');
+          btn.className = 'page-btn' + (j === page ? ' active' : '');
+          btn.textContent = j + 1;
+          btn.onclick = () => renderPage(j);
+          paginationRoot.appendChild(btn);
+        }
+
+        // Next button
+        const next = document.createElement('button');
+        next.className = 'page-btn prev-next';
+        next.textContent = 'Next';
+        next.disabled = (page >= totalPages - 1);
+        next.onclick = () => renderPage(page + 1);
+        paginationRoot.appendChild(next);
+      }
+    }
 
     tryLoadImages();
 
