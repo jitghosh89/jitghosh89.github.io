@@ -1922,17 +1922,21 @@
     function tryLoadImages() {
       let loaded = [], checked = 0;
       for (let i = 1; i <= GALLERY_MAX; i++) {
-        const src = `gallery-${pad(i)}.jpg`;
+        const id = pad(i);
+        const full = `gallery-${id}.jpg`;
+        const thumb = `gallery-${id}-thumb.jpg`;
+
+        // We check if the FULL image exists first to determine if we have a photo at this slot
         const img = new Image();
-        img.onload = () => { loaded.push({ src, idx: i }); done(); };
+        img.onload = () => { loaded.push({ full, thumb, idx: i }); done(); };
         img.onerror = () => { done(); };
-        img.src = src;
+        img.src = full;
       }
       function done() {
         checked++;
         if (checked === GALLERY_MAX) {
           loaded.sort((a, b) => a.idx - b.idx);
-          galleryImages = loaded.map(l => l.src);
+          galleryImages = loaded; // now stores {full, thumb, idx}
           renderPage(0);
         }
       }
@@ -1955,25 +1959,27 @@
       const start = page * PER_PAGE;
       const slice = galleryImages.slice(start, start + PER_PAGE);
 
-      slice.forEach((src, i) => {
+      slice.forEach((item, i) => {
         const cell = document.createElement('div');
         cell.className = 'gallery-cell';
 
         const img = document.createElement('img');
         img.className = 'cell-img';
-        img.src = src;
-        img.alt = `Photo ${start + i + 1}`;
+        // Try thumb first, fallback to full on error
+        img.src = item.thumb;
+        img.onerror = () => { img.src = item.full; img.onerror = null; };
+        img.alt = `Photo ${item.idx}`;
 
         const overlay = document.createElement('div');
         overlay.className = 'cell-overlay';
         const num = document.createElement('span');
         num.className = 'cell-num';
-        num.textContent = String(start + i + 1).padStart(2, '0');
+        num.textContent = String(item.idx).padStart(2, '0');
         overlay.appendChild(num);
 
         cell.appendChild(img);
         cell.appendChild(overlay);
-        cell.addEventListener('click', () => openLightbox(src));
+        cell.addEventListener('click', () => openLightbox(item.full));
         galleryGrid.appendChild(cell);
       });
 
